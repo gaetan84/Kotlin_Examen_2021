@@ -1,5 +1,6 @@
 package com.example.kotlin_examen
 
+import android.graphics.BitmapFactory
 import android.util.JsonReader
 import android.util.JsonToken
 import java.io.IOException
@@ -28,8 +29,7 @@ class Enterprise_Service() {
             val reader = JsonReader(inputStream.bufferedReader())
             val listLocation = mutableListOf<Location_Enterprise>()
             reader.beginObject()
-            while (reader.hasNext())
-            {
+            while (reader.hasNext()) {
                 if (reader.nextName() == "etablissement") {
                     reader.beginArray()
                     while (reader.hasNext()) {
@@ -40,25 +40,20 @@ class Enterprise_Service() {
                             when (reader.nextName()) {
 
 
-
-
-
                                 "siret" -> location.siret = reader.nextString()
-
 
 
                                 "nom_raison_sociale" -> location.name = reader.nextString()
 
 
-                                "departement" ->{ if (reader.peek() == JsonToken.NULL){
+                                "departement" -> {
+                                    if (reader.peek() == JsonToken.NULL) {
 
-                                 reader.nextNull()
+                                        reader.nextNull()
+                                    } else {
+                                        location.departement = reader.nextString()
+                                    }
                                 }
-
-
-                                else {
-                                    location.departement = reader.nextString()
-                                }}
                                 else -> reader.skipValue()
 
                             }
@@ -68,9 +63,7 @@ class Enterprise_Service() {
                     }
 
                     reader.endArray()
-                }
-                else
-                {
+                } else {
 
                     reader.skipValue()
 
@@ -82,6 +75,63 @@ class Enterprise_Service() {
             return emptyList()
         } finally {
             connection?.disconnect()
+        }
+    }
+
+    fun getinformation(location: Location_Enterprise): Enterprise? {
+        val querySiret = location.siret
+        val queryurl = "https://entreprise.data.gouv.fr/api/sirene/v1/siret/$querySiret"
+
+
+        val urlWeather = URL(String.format(queryurl))
+        var connect: HttpsURLConnection? = null
+
+        try {
+            connect = urlWeather.openConnection() as HttpsURLConnection
+            connect.connect()
+            val code = connect.responseCode
+
+            if (code != HttpsURLConnection.HTTP_OK) {
+                return null
+            }
+            val inputStream = connect.inputStream ?: return null
+            val reader = JsonReader(inputStream.bufferedReader())
+            val entreprise = Enterprise()
+
+            reader.beginObject()
+            while (reader.hasNext()) {
+                if (reader.nextName() == "etablissement") {
+
+                       // val entreprise = Enterprise()
+                        reader.beginObject()
+                        while (reader.hasNext()) {
+
+                            when (reader.nextName()) {
+                                "nom_raison_sociale" -> entreprise.Name_enterprise =
+                                    reader.nextString()
+                                "geo_adresse" -> entreprise.adresse = reader.nextString()
+
+                                "date_creation" -> entreprise.date_crea = reader.nextString()
+                                "libelle_nature_juridique_entreprise" -> entreprise.type =
+                                    reader.nextString()
+
+                                else -> reader.skipValue()
+                            }
+                        }
+                        reader.endObject()
+
+
+                } else {
+                    reader.skipValue()
+                }
+            }
+            reader.endObject()
+
+            return entreprise
+        } catch (e: IOException) {
+            return null
+        } finally {
+            connect?.disconnect()
         }
     }
 }

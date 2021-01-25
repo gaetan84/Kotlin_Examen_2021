@@ -3,4 +3,11 @@
     <string name="Title">"Recherche d'entreprise"</string>
     <string name="action_require">"Veuillez ecrire le nom de l'entreprise rechercher"</string>
     <string name="name_enterprise">"Nom de l'entreprise"</string>
+    <string name="recherche_ville">Rechercher une ville</string>
+    <string name="meteo_ville">Météo du %s à %s</string>
+    <string name="temperature_max">Max : %.1f°C</string>
+    <string name="temperature_min">Min : %.1f°C</string>
+    <string name="vitesse_vent">Vent : %.2f km/h SSE</string>
+    <string name="humidité">Humidité : %.0f </string>
+    <string name="previ">Prévisibilité : %.0f</string>
 </resources>
