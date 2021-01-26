@@ -32,12 +32,48 @@
 
 
     </TextView>
+    <Switch
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/Instruction"
+        android:id="@+id/switchdepartment"
+        >
+    </Switch>
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:maxLength="2"
+        android:layout_below="@+id/Instruction"
+        >
+
+
+
+    </EditText>
+    <Switch
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/Instruction"
+        android:id="@+id/switchcodepostal"
+
+        >
+    </Switch>
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/Instruction"
+        android:maxLength="2"
+        >
+
+
+
+    </EditText>
     <EditText
         android:id="@+id/name_enterprise"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/Instruction"
         android:text="@string/name_enterprise"
+
         android:layout_toStartOf="@+id/imagebuttonsearch"
         android:layout_marginTop="@dimen/marge_S"
         >

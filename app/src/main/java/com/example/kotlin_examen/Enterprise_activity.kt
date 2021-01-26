@@ -115,6 +115,8 @@ class Enterprise_Service() {
                                 "libelle_nature_juridique_entreprise" -> entreprise.type =
                                     reader.nextString()
                                 "libelle_activite_principale"-> entreprise.activité=reader.nextString()
+                                "longitude"->entreprise.lon=reader.nextString().toDouble()
+                                "latitude"->entreprise.lata=reader.nextString().toDouble()
                                 else -> reader.skipValue()
                             }
                         }

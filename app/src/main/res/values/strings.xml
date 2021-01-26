@@ -7,5 +7,6 @@
     <string name="nature_juridique">"Nature juridique de l'entreprise: %s"</string>
     <string name="activité">"Nature de l'activité: %s"</string>
 
-
+    <string name="string_map">Whole Map</string>
+    <string name="string_location">Current Location</string>
 </resources>

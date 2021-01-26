@@ -28,7 +28,7 @@ class MainActivity : AppCompatActivity() {
 
         override fun doInBackground(vararg params: String?): List<Location_Enterprise> {
             val query = params[0] ?: return emptyList()
-
+val query2= params[1] ?: return emptyList()
             return svc.getLocations(query)
         }
 
@@ -56,6 +56,7 @@ class MainActivity : AppCompatActivity() {
         val svc = Enterprise_Service()
         findViewById<ImageButton>(R.id.imagebuttonsearch).setOnClickListener {
             val equery = name_enterprise.text.toString()
+            val test=name_enterprise.text.toString()
             QueryTask(svc, listResults).execute(equery)
         }
         list.setOnItemClickListener { parent, view, position, id ->

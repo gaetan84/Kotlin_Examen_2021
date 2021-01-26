@@ -1,15 +1,27 @@
 package com.example.kotlin_examen
 
+import android.content.Intent
 import android.os.AsyncTask
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
-import android.widget.ImageView
 import android.widget.RelativeLayout
-import android.widget.Switch
 import android.widget.TextView
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
+import kotlinx.android.synthetic.main.activity_detail_enterprise.*
+import kotlinx.android.synthetic.main.activity_location.*
 
-class detail_enterprise : AppCompatActivity() {
+class detail_enterprise : AppCompatActivity() , OnMapReadyCallback  {
+    var lat: Double= 40.0
+    var lon: Double= 40.0
     inner class QueryEnterprise(private val service:Enterprise_Service, private val layout: RelativeLayout): AsyncTask<Location_Enterprise, String,Enterprise>()
     {
 
@@ -71,10 +83,13 @@ when ( mois){
             layout.findViewById<TextView>(R.id.adresse).text = String.format(getString(R.string.Adresse),formatText(result?.adresse.toString()) )
             layout.findViewById<TextView>(R.id.type).text =String.format(getString(R.string.nature_juridique), formatText(result?.type.toString()) )
             layout.findViewById<TextView>(R.id.activité).text= String.format(getString(R.string.activité), formatText(result?.activité.toString()) )
-
+             lat= result?.lata!!
+           lon=result?.lon
             layout.visibility = View.VISIBLE
-
+            val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
+            mapFragment.getMapAsync(this@detail_enterprise)
         }
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?)
@@ -84,8 +99,48 @@ when ( mois){
 
         val svc = Enterprise_Service()
         val location = intent.getSerializableExtra("siret") as Location_Enterprise
+      var test=  location.siret
 
         val layout = findViewById<RelativeLayout>(R.id.relative)
         QueryEnterprise(svc, layout).execute(location)
+
+    }
+
+    override fun onMapReady(googleMap: GoogleMap ) {
+        // Add a marker in Sydney, Australia,
+        // and move the map's camera to the same location.
+        val positiongeo = LatLng(lat,lon)
+        googleMap.addMarker(
+            MarkerOptions().position(positiongeo)
+                .title("marqueur"))
+
+
+
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(positiongeo,13f))
+
+
+
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        // Handle item selection
+        when (item.getItemId()) {
+            R.id.whole_map -> {
+                val intent = Intent(this, MainActivity::class.java)
+                startActivity(intent)
+                return true
+            }
+            R.id.location -> {
+                val intent = Intent(this, LocationActivity::class.java)
+                startActivity(intent)
+                return true
+            }
+            else -> return super.onOptionsItemSelected(item)
+        }
     }
 }
