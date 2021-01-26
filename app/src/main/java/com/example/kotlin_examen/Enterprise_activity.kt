@@ -114,7 +114,7 @@ class Enterprise_Service() {
                                 "date_creation" -> entreprise.date_crea = reader.nextString()
                                 "libelle_nature_juridique_entreprise" -> entreprise.type =
                                     reader.nextString()
-
+                                "libelle_activite_principale"-> entreprise.activité=reader.nextString()
                                 else -> reader.skipValue()
                             }
                         }

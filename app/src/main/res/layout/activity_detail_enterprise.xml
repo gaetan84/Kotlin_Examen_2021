@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/relative"
     android:layout_width="match_parent"
@@ -10,6 +10,7 @@
         android:id="@+id/Name_enterprise"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+
         android:textSize="@dimen/Title"
         android:layout_centerHorizontal="true"
 
@@ -19,6 +20,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="@dimen/text_normal"
+        android:layout_marginTop="@dimen/marge_N"
         android:layout_below="@+id/Name_enterprise"
 
         ></TextView>
@@ -28,6 +30,7 @@
         android:layout_height="wrap_content"
         android:textSize="@dimen/text_normal"
         android:layout_below="@+id/adresse"
+        android:layout_marginTop="@dimen/marge_N"
 
         ></TextView>
     <TextView
@@ -36,6 +39,16 @@
         android:layout_height="wrap_content"
         android:textSize="@dimen/text_normal"
         android:layout_below="@+id/date_crea"
+        android:layout_marginTop="@dimen/marge_N"
+
+        ></TextView>
+    <TextView
+        android:id="@+id/activité"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/text_normal"
+        android:layout_below="@+id/type"
+        android:layout_marginTop="@dimen/marge_N"
 
         ></TextView>
 </RelativeLayout>
