@@ -67,11 +67,9 @@ var rbcode= findViewById<RadioButton>(R.id.radiocode)
         findViewById<ImageButton>(R.id.imagebuttonsearch).setOnClickListener {
             val equery = name_enterprise.text.toString()
             val test=name_enterprise.text.toString()
-         //   val apiUrl = "https://entreprise.data.gouv.fr"
-          //  val queryUrl = "$apiUrl/api/sirene/v1/full_text/%s?page=1&per_page=100"
-          //  val url= String.format(queryUrl,equery)
 
-          //  if()
+
+
             QueryTask(svc, listResults).execute(equery)
         }
         list.setOnItemClickListener { parent, view, position, id ->

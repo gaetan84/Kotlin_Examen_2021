@@ -17,32 +17,17 @@ class Enterprise_Service(val entrepriseDAO: Location_EnterpriseDAO) {
 
     fun getLocations(query1: String): List<Location_Enterprise> {
         val url = URL(String.format(queryUrl, query1))
-        var test = "f"
+
         var url2: String = String.format(queryUrl, query1)
         var connection: HttpsURLConnection? = null
-        var count= entrepriseDAO.count()
-        var i=0
-       /* while (i<=count)  {
-            if (url2== entrepriseDAO.selectbyid(i) )
-           {
-
-            }
 
 
-        }*/
+        val existe = entrepriseDAO.getIDbyurl(url2)
+
+        if (existe == 0) {
 
 
 
-
-        if (url2 == entrepriseDAO.select()) {
-            val listLocation = mutableListOf<Location_Enterprise>()
-            listLocation.addAll(entrepriseDAO.selectbyrecherche(url2))
-
-            return listLocation
-            }
-
-
-         else {
             try {
                 connection = url.openConnection() as HttpsURLConnection
                 connection.connect()
@@ -107,8 +92,20 @@ class Enterprise_Service(val entrepriseDAO: Location_EnterpriseDAO) {
             } finally {
                 connection?.disconnect()
             }
+        } else
+        {
+
+
+            val listLocation = mutableListOf<Location_Enterprise>()
+            listLocation.addAll(entrepriseDAO.selectbyrecherche(url2))
+
+            return listLocation
+
         }
+
     }
+
+
 
     fun getinformation(location: Location_Enterprise): Enterprise? {
         val querySiret = location.siret
@@ -134,25 +131,43 @@ class Enterprise_Service(val entrepriseDAO: Location_EnterpriseDAO) {
             while (reader.hasNext()) {
                 if (reader.nextName() == "etablissement") {
 
-                       // val entreprise = Enterprise()
-                        reader.beginObject()
-                        while (reader.hasNext()) {
+                    // val entreprise = Enterprise()
+                    reader.beginObject()
+                    while (reader.hasNext()) {
 
-                            when (reader.nextName()) {
-                                "nom_raison_sociale" -> entreprise.Name_enterprise =
-                                    reader.nextString()
-                                "geo_adresse" -> entreprise.adresse = reader.nextString()
+                        when (reader.nextName()) {
+                            "nom_raison_sociale" -> {
+                                if (reader.peek() == JsonToken.NULL) { reader.nextNull()}else{entreprise.Name_enterprise =
+                                reader.nextString()}}
+                            "geo_adresse" -> {
+                                if (reader.peek() == JsonToken.NULL) { reader.nextNull()}else{entreprise.adresse = reader.nextString()}}
 
-                                "date_creation" -> entreprise.date_crea = reader.nextString()
-                                "libelle_nature_juridique_entreprise" -> entreprise.type =
-                                    reader.nextString()
-                                "libelle_activite_principale"-> entreprise.activité=reader.nextString()
-                                "longitude"->entreprise.lon=reader.nextString().toDouble()
-                                "latitude"->entreprise.lata=reader.nextString().toDouble()
-                                else -> reader.skipValue()
-                            }
+                            "date_creation" -> {
+                                if (reader.peek() == JsonToken.NULL) { reader.nextNull()}else{entreprise.date_crea = reader.nextString()}}
+                            "libelle_nature_juridique_entreprise" -> {
+                                if (reader.peek() == JsonToken.NULL) { reader.nextNull()}else{entreprise.type =
+                                reader.nextString()}}
+                            "libelle_activite_principale" ->{
+                                if (reader.peek() == JsonToken.NULL) { reader.nextNull()}else{ entreprise.activité =
+                                reader.nextString()}}
+                            "longitude" -> {
+                                if (reader.peek() == JsonToken.NULL) {
+
+                                    reader.nextNull()
+                                } else {
+                                    entreprise.lon = reader.nextString().toDouble()
+                                }}
+                            "latitude" -> {
+                                if (reader.peek() == JsonToken.NULL) {
+
+                                reader.nextNull()
+                            } else {
+                                entreprise.lata = reader.nextString().toDouble()
+                            }}
+                            else -> reader.skipValue()
                         }
-                        reader.endObject()
+                    }
+                    reader.endObject()
 
 
                 } else {
@@ -167,5 +182,6 @@ class Enterprise_Service(val entrepriseDAO: Location_EnterpriseDAO) {
         } finally {
             connect?.disconnect()
         }
+
     }
 }
