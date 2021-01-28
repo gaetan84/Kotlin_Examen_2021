@@ -1,16 +1,19 @@
 package com.example.kotlin_examen
 
+import android.app.Activity
 import android.content.Context
 import android.graphics.BitmapFactory
 import android.util.JsonReader
 import android.util.JsonToken
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.room.Database
 import androidx.room.util.DBUtil
 import java.io.IOException
 import java.net.URL
 import javax.net.ssl.HttpsURLConnection
 
-class Enterprise_Service(val entrepriseDAO: Location_EnterpriseDAO) {
+class Enterprise_Service(val entrepriseDAO: Location_EnterpriseDAO, val detailDAO: EntrepriseDAO) {
 
     private val apiUrl = "https://entreprise.data.gouv.fr"
     private val queryUrl = "$apiUrl/api/sirene/v1/full_text/%s?page=1&per_page=100"
@@ -88,6 +91,7 @@ class Enterprise_Service(val entrepriseDAO: Location_EnterpriseDAO) {
                 reader.endObject()
                 return listLocation
             } catch (e: IOException) {
+
                 return emptyList()
             } finally {
                 connection?.disconnect()
@@ -114,74 +118,114 @@ class Enterprise_Service(val entrepriseDAO: Location_EnterpriseDAO) {
 
         val urlWeather = URL(String.format(queryurl))
         var connect: HttpsURLConnection? = null
-
-        try {
-            connect = urlWeather.openConnection() as HttpsURLConnection
-            connect.connect()
-            val code = connect.responseCode
-
-            if (code != HttpsURLConnection.HTTP_OK) {
-                return null
-            }
-            val inputStream = connect.inputStream ?: return null
-            val reader = JsonReader(inputStream.bufferedReader())
-            val entreprise = Enterprise()
-
-            reader.beginObject()
-            while (reader.hasNext()) {
-                if (reader.nextName() == "etablissement") {
-
-                    // val entreprise = Enterprise()
-                    reader.beginObject()
-                    while (reader.hasNext()) {
-
-                        when (reader.nextName()) {
-                            "nom_raison_sociale" -> {
-                                if (reader.peek() == JsonToken.NULL) { reader.nextNull()}else{entreprise.Name_enterprise =
-                                reader.nextString()}}
-                            "geo_adresse" -> {
-                                if (reader.peek() == JsonToken.NULL) { reader.nextNull()}else{entreprise.adresse = reader.nextString()}}
-
-                            "date_creation" -> {
-                                if (reader.peek() == JsonToken.NULL) { reader.nextNull()}else{entreprise.date_crea = reader.nextString()}}
-                            "libelle_nature_juridique_entreprise" -> {
-                                if (reader.peek() == JsonToken.NULL) { reader.nextNull()}else{entreprise.type =
-                                reader.nextString()}}
-                            "libelle_activite_principale" ->{
-                                if (reader.peek() == JsonToken.NULL) { reader.nextNull()}else{ entreprise.activité =
-                                reader.nextString()}}
-                            "longitude" -> {
-                                if (reader.peek() == JsonToken.NULL) {
-
-                                    reader.nextNull()
-                                } else {
-                                    entreprise.lon = reader.nextString().toDouble()
-                                }}
-                            "latitude" -> {
-                                if (reader.peek() == JsonToken.NULL) {
-
-                                reader.nextNull()
-                            } else {
-                                entreprise.lata = reader.nextString().toDouble()
-                            }}
-                            else -> reader.skipValue()
-                        }
-                    }
-                    reader.endObject()
+var test= detailDAO.getIDbysiret(querySiret)
+        if(test!=0){
+            var enterprise= Enterprise()
+            enterprise=detailDAO.selectbysiretl(querySiret)
+            return enterprise
 
 
-                } else {
-                    reader.skipValue()
+        }else {
+            try {
+                connect = urlWeather.openConnection() as HttpsURLConnection
+                connect.connect()
+                val code = connect.responseCode
+
+                if (code != HttpsURLConnection.HTTP_OK) {
+                    return null
                 }
+                val inputStream = connect.inputStream ?: return null
+                val reader = JsonReader(inputStream.bufferedReader())
+                val entreprise = Enterprise()
+
+                reader.beginObject()
+                while (reader.hasNext()) {
+                    if (reader.nextName() == "etablissement") {
+
+                        // val entreprise = Enterprise()
+                        reader.beginObject()
+                        while (reader.hasNext()) {
+
+                            when (reader.nextName()) {
+                                "nom_raison_sociale" -> {
+                                    if (reader.peek() == JsonToken.NULL) {
+                                        reader.nextNull()
+                                    } else {
+                                        entreprise.Name_enterprise =
+                                            reader.nextString()
+                                    }
+                                }
+                                "geo_adresse" -> {
+                                    if (reader.peek() == JsonToken.NULL) {
+                                        reader.nextNull()
+                                    } else {
+                                        entreprise.adresse = reader.nextString()
+                                    }
+                                }
+
+                                "date_creation" -> {
+                                    if (reader.peek() == JsonToken.NULL) {
+                                        reader.nextNull()
+                                    } else {
+                                        entreprise.date_crea = reader.nextString()
+                                    }
+                                }
+                                "libelle_nature_juridique_entreprise" -> {
+                                    if (reader.peek() == JsonToken.NULL) {
+                                        reader.nextNull()
+                                    } else {
+                                        entreprise.type =
+                                            reader.nextString()
+                                    }
+                                }
+                                "libelle_activite_principale" -> {
+                                    if (reader.peek() == JsonToken.NULL) {
+                                        reader.nextNull()
+                                    } else {
+                                        entreprise.activité =
+                                            reader.nextString()
+                                    }
+                                }
+                                "longitude" -> {
+                                    if (reader.peek() == JsonToken.NULL) {
+
+                                        reader.nextNull()
+                                    } else {
+                                        entreprise.lon = reader.nextString().toDouble()
+                                    }
+                                }
+                                "latitude" -> {
+                                    if (reader.peek() == JsonToken.NULL) {
+
+                                        reader.nextNull()
+                                    } else {
+                                        entreprise.lata = reader.nextString().toDouble()
+                                    }
+                                }
+                                else -> reader.skipValue()
+                            }
+                        }
+                        entreprise.connectinternet=true
+                        entreprise.siret = querySiret
+                        detailDAO.insert(entreprise)
+                        reader.endObject()
+
+
+                    } else {
+                        reader.skipValue()
+                    }
+                }
+                reader.endObject()
+
+                return entreprise
+            } catch (e: IOException) {
+
+                return    Enterprise()
+
+
+            } finally {
+                connect?.disconnect()
             }
-            reader.endObject()
-
-            return entreprise
-        } catch (e: IOException) {
-            return null
-        } finally {
-            connect?.disconnect()
         }
-
     }
 }

@@ -42,4 +42,3 @@ class Adapterlist(private val context: Context,private  val dataSource: List<Loc
         return rowView
     }
 }
-

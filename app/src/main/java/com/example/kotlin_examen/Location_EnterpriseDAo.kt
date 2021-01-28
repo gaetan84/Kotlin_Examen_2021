@@ -11,7 +11,7 @@ interface Location_EnterpriseDAO {
 
     @Query ("SELECT * FROM Location_Enterprise")
     fun selectall():List<Location_Enterprise>
-   @Query ("SELECT recherche FROM Location_Enterprise")
+    @Query ("SELECT recherche FROM Location_Enterprise")
     fun select():String
     @Query ("SELECT  id FROM Location_Enterprise WHERE recherche= :url")
     fun getIDbyurl(url: String): Int

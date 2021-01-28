@@ -9,9 +9,10 @@ data class Location_Enterprise(@PrimaryKey(autoGenerate =true)var id:Int?=null,v
 {
     override fun toString(): String
     {
-        return "$name"
+        return "$name $departement"
     }
 
 
 
 }
+
