@@ -96,9 +96,11 @@ when ( mois){
     {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail_enterprise)
-
-        val svc = Enterprise_Service()
+        val db= TodoDatabase.getDatabase(this)
+        val entdao= db.locationDao()
+        val svc = Enterprise_Service(entdao)
         val location = intent.getSerializableExtra("siret") as Location_Enterprise
+
       var test=  location.siret
 
         val layout = findViewById<RelativeLayout>(R.id.relative)
@@ -122,25 +124,7 @@ when ( mois){
 
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu, menu)
-        return super.onCreateOptionsMenu(menu)
-    }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle item selection
-        when (item.getItemId()) {
-            R.id.whole_map -> {
-                val intent = Intent(this, MainActivity::class.java)
-                startActivity(intent)
-                return true
-            }
-            R.id.location -> {
-                val intent = Intent(this, LocationActivity::class.java)
-                startActivity(intent)
-                return true
-            }
-            else -> return super.onOptionsItemSelected(item)
-        }
-    }
+
+
 }

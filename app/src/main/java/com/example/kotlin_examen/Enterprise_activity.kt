@@ -1,80 +1,112 @@
 package com.example.kotlin_examen
 
+import android.content.Context
 import android.graphics.BitmapFactory
 import android.util.JsonReader
 import android.util.JsonToken
+import androidx.room.Database
+import androidx.room.util.DBUtil
 import java.io.IOException
 import java.net.URL
 import javax.net.ssl.HttpsURLConnection
 
-class Enterprise_Service() {
+class Enterprise_Service(val entrepriseDAO: Location_EnterpriseDAO) {
 
     private val apiUrl = "https://entreprise.data.gouv.fr"
     private val queryUrl = "$apiUrl/api/sirene/v1/full_text/%s?page=1&per_page=100"
 
     fun getLocations(query1: String): List<Location_Enterprise> {
         val url = URL(String.format(queryUrl, query1))
+        var test = "f"
+        var url2: String = String.format(queryUrl, query1)
         var connection: HttpsURLConnection? = null
+        var count= entrepriseDAO.count()
+        var i=0
+       /* while (i<=count)  {
+            if (url2== entrepriseDAO.selectbyid(i) )
+           {
 
-        try {
-            connection = url.openConnection() as HttpsURLConnection
-            connection.connect()
-
-            val code = connection.responseCode
-
-            if (code != HttpsURLConnection.HTTP_OK) {
-                return emptyList()
             }
-            val inputStream = connection.inputStream ?: return emptyList()
-            val reader = JsonReader(inputStream.bufferedReader())
+
+
+        }*/
+
+
+
+
+        if (url2 == entrepriseDAO.select()) {
             val listLocation = mutableListOf<Location_Enterprise>()
-            reader.beginObject()
-            while (reader.hasNext()) {
-                if (reader.nextName() == "etablissement") {
-                    reader.beginArray()
-                    while (reader.hasNext()) {
-                        val location = Location_Enterprise()
-                        reader.beginObject()
+            listLocation.addAll(entrepriseDAO.selectbyrecherche(url2))
+
+            return listLocation
+            }
+
+
+         else {
+            try {
+                connection = url.openConnection() as HttpsURLConnection
+                connection.connect()
+
+                val code = connection.responseCode
+
+                if (code != HttpsURLConnection.HTTP_OK) {
+                    return emptyList()
+                }
+                val inputStream = connection.inputStream ?: return emptyList()
+                val reader = JsonReader(inputStream.bufferedReader())
+                val listLocation = mutableListOf<Location_Enterprise>()
+                reader.beginObject()
+                while (reader.hasNext()) {
+                    if (reader.nextName() == "etablissement") {
+                        reader.beginArray()
                         while (reader.hasNext()) {
+                            val location = Location_Enterprise()
+                            reader.beginObject()
+                            while (reader.hasNext()) {
 
-                            when (reader.nextName()) {
-
-
-                                "siret" -> location.siret = reader.nextString()
-
-
-                                "nom_raison_sociale" -> location.name = reader.nextString()
+                                when (reader.nextName()) {
 
 
-                                "departement" -> {
-                                    if (reader.peek() == JsonToken.NULL) {
+                                    "siret" -> location.siret = reader.nextString()
 
-                                        reader.nextNull()
-                                    } else {
-                                        location.departement = reader.nextString()
+
+                                    "nom_raison_sociale" -> location.name = reader.nextString()
+
+
+                                    "departement" -> {
+                                        if (reader.peek() == JsonToken.NULL) {
+
+                                            reader.nextNull()
+                                        } else {
+                                            location.departement = reader.nextString()
+                                        }
                                     }
+
+                                    else -> reader.skipValue()
+
                                 }
-                                else -> reader.skipValue()
 
                             }
+                            reader.endObject()
+                            location.recherche = url2
+                            listLocation.add(location)
+                            entrepriseDAO.insert(location)
                         }
-                        reader.endObject()
-                        listLocation.add(location)
+
+                        reader.endArray()
+                    } else {
+
+                        reader.skipValue()
+
                     }
-
-                    reader.endArray()
-                } else {
-
-                    reader.skipValue()
-
                 }
+                reader.endObject()
+                return listLocation
+            } catch (e: IOException) {
+                return emptyList()
+            } finally {
+                connection?.disconnect()
             }
-            reader.endObject()
-            return listLocation
-        } catch (e: IOException) {
-            return emptyList()
-        } finally {
-            connection?.disconnect()
         }
     }
 
