@@ -37,24 +37,59 @@
     android:id="@+id/linearlayout"
     android:layout_height="wrap_content"
     android:layout_width="match_parent">
+    <RadioGroup
+        android:id="@+id/radioGroup_character"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+      >
     <RadioButton
     android:id="@+id/radiodepartement"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:checked="true"
+    android:checked="false"
     android:text="Departement"></RadioButton>
     <RadioButton
         android:id="@+id/radiocode"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:checked="true"
+        android:checked="false"
         android:text="Code postale"></RadioButton>
+        <RadioButton
+            android:id="@+id/aucunparametre"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="Aucun paramètre Avancé"></RadioButton>
 
+    </RadioGroup>
+
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+   <EditText
+       android:id="@+id/depart_edit"
+       android:layout_width="50sp"
+       android:layout_height="wrap_content"
+       android:maxLength="2"
+       android:layout_gravity="center"
+       android:inputType="numberDecimal"
+       >
+
+
+
+   </EditText>
     <EditText
-        android:layout_width="match_parent"
+        android:id="@+id/codepostale_edit"
+        android:layout_width="80sp"
         android:layout_height="wrap_content"
         android:maxLength="5"
-        android:id="@+id/editdeparcode"
+        android:layout_gravity="center"
+        android:inputType="numberDecimal"
         >
 
 
@@ -62,20 +97,27 @@
     </EditText>
 
 
-
+</LinearLayout>
 
 
 
 
 </LinearLayout>
 
+
+
+
+
+
+
+
     <EditText
         android:id="@+id/name_enterprise"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/linearlayout"
-        android:text="@string/name_enterprise"
 
+        android:hint="@string/name_enterprise"
         android:layout_toStartOf="@+id/imagebuttonsearch"
         android:layout_marginTop="@dimen/marge_S"
         >

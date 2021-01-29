@@ -19,13 +19,13 @@ class Enterprise_Service(val entrepriseDAO: Location_EnterpriseDAO, val detailDA
     private val queryUrl = "$apiUrl/api/sirene/v1/full_text/%s?page=1&per_page=100"
 
     fun getLocations(query1: String): List<Location_Enterprise> {
-        val url = URL(String.format(queryUrl, query1))
+        val url = URL(query1)
 
-        var url2: String = String.format(queryUrl, query1)
+     //   var url2: String = String.format( query1)
         var connection: HttpsURLConnection? = null
 
 
-        val existe = entrepriseDAO.getIDbyurl(url2)
+        val existe = entrepriseDAO.getIDbyurl(query1)
 
         if (existe == 0) {
 
@@ -76,7 +76,7 @@ class Enterprise_Service(val entrepriseDAO: Location_EnterpriseDAO, val detailDA
 
                             }
                             reader.endObject()
-                            location.recherche = url2
+                            location.recherche = query1
                             listLocation.add(location)
                             entrepriseDAO.insert(location)
                         }
@@ -101,7 +101,7 @@ class Enterprise_Service(val entrepriseDAO: Location_EnterpriseDAO, val detailDA
 
 
             val listLocation = mutableListOf<Location_Enterprise>()
-            listLocation.addAll(entrepriseDAO.selectbyrecherche(url2))
+            listLocation.addAll(entrepriseDAO.selectbyrecherche(query1))
 
             return listLocation
 
